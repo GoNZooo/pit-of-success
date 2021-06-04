@@ -97,16 +97,9 @@ var application = {
     render: function (_a) {
         var state = _a.state, dispatchClientEvent = _a.dispatchClientEvent;
         var tabs = renderTabs(state.tabs, state.activeTab, dispatchClientEvent);
-        return (React.createElement("div", { style: {
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                flexGrow: 1,
-                width: "100%",
-                height: "60vh",
-            } },
-            React.createElement("div", null, tabs),
-            React.createElement("div", { style: { display: "flex", flexDirection: "column", justifyContent: "center" } }, renderActiveTab(state.tabs, dispatchClientEvent, state.activeTab))));
+        return (React.createElement("div", { className: "container" },
+            React.createElement("div", { className: "tabs" }, tabs),
+            React.createElement("div", { className: "counter-container" }, renderActiveTab(state.tabs, dispatchClientEvent, state.activeTab))));
     },
 };
 function renderTabs(tabs, activeTab, dispatchClientEvent) {
@@ -114,9 +107,9 @@ function renderTabs(tabs, activeTab, dispatchClientEvent) {
         dispatchClientEvent({ type: "SwitchActiveTab", index: index });
     }; };
     var renderedTabs = tabs.map(function (tab, index) {
-        var tabStyle = index === activeTab ? { textDecoration: "underline" } : {};
+        var tabClass = index === activeTab ? "active" : "";
         var tabText = tab.screen.type === "Counter" ? tab.screen.count : tab.screen.type;
-        return (React.createElement("button", { key: index, onClick: handleSwitchActiveTab(index), style: tabStyle },
+        return (React.createElement("li", { key: index, onClick: handleSwitchActiveTab(index), className: tabClass },
             index,
             ": ",
             tabText));
@@ -127,11 +120,13 @@ function renderTabs(tabs, activeTab, dispatchClientEvent) {
     var handleRemoveTab = function (_e) {
         dispatchClientEvent({ type: "RemoveTab", index: activeTab });
     };
-    return (React.createElement("nav", { style: { display: "flex", justifyContent: "space-between" } },
-        React.createElement("div", null, renderedTabs),
-        React.createElement("div", null,
-            React.createElement("button", { onClick: handleRemoveTab }, "-"),
-            React.createElement("button", { onClick: handleAddTab }, "+"))));
+    return (React.createElement("nav", { className: "nav-bar" },
+        React.createElement("ul", { className: "rendered-tabs" }, renderedTabs),
+        React.createElement("div", { className: "add-remove-tabs" },
+            React.createElement("p", null, "Add/Remove tabs"),
+            React.createElement("div", { className: "buttons-wrapper" },
+                React.createElement("button", { onClick: handleAddTab }, "+"),
+                React.createElement("button", { onClick: handleRemoveTab }, "-")))));
 }
 function renderActiveTab(tabs, dispatchClientEvent, index) {
     var tab = tabs[index];
@@ -153,20 +148,30 @@ function renderActiveTab(tabs, dispatchClientEvent, index) {
                 dispatchClientEvent({ type: "GoToAbout", index: index });
             };
             return (React.createElement(React.Fragment, null,
-                React.createElement("button", { onClick: handleDecrement }, "-"),
-                React.createElement("button", { onClick: handleReset }, "0"),
-                React.createElement("button", { onClick: handleIncrement }, "+"),
-                React.createElement("button", { onClick: handleDouble }, "Double"),
-                React.createElement("div", null, tab.screen.count),
-                React.createElement("div", { onClick: handleAbout }, "About")));
+                React.createElement("div", { className: "counter-buttons" },
+                    React.createElement("p", null, "Manage Active Tab Count"),
+                    React.createElement("button", { onClick: handleIncrement }, "+"),
+                    React.createElement("button", { onClick: handleDecrement }, "-"),
+                    React.createElement("button", { onClick: handleDouble }, "Double"),
+                    React.createElement("button", { onClick: handleReset }, "Reset"),
+                    React.createElement("p", null,
+                        "Current Active Tab Count: ",
+                        tab.screen.count)),
+                React.createElement("footer", null,
+                    React.createElement("nav", { className: "footer-nav" },
+                        React.createElement("a", { className: "nav-item", onClick: handleAbout }, "About")))));
         }
         case "About": {
             var handleCounter = function (_e) {
                 dispatchClientEvent({ type: "GoToCounter", index: index });
             };
             return (React.createElement(React.Fragment, null,
-                React.createElement("div", null, "This is an example app with tabs"),
-                React.createElement("button", { onClick: handleCounter }, "Switch back to counter")));
+                React.createElement("div", { className: "counter-buttons" },
+                    React.createElement("p", null, "Now you are on the About screen"),
+                    React.createElement("p", null, "The content of the current active tab has changed")),
+                React.createElement("footer", null,
+                    React.createElement("nav", { className: "footer-nav" },
+                        React.createElement("a", { className: "nav-item", onClick: handleCounter }, "Back to counter")))));
         }
         default:
             pos.assertUnreachable(tab.screen);

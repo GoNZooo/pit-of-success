@@ -125,18 +125,9 @@ const application: pos.Application<State, ServerEvent, ClientEvent> = {
     const tabs = renderTabs(state.tabs, state.activeTab, dispatchClientEvent);
 
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          flexGrow: 1,
-          width: "100%",
-          height: "60vh",
-        }}
-      >
-        <div>{tabs}</div>
-        <div style={{display: "flex", flexDirection: "column", justifyContent: "center"}}>
+      <div className="container">
+        <div className="tabs">{tabs}</div>
+        <div className="counter-container">
           {renderActiveTab(state.tabs, dispatchClientEvent, state.activeTab)}
         </div>
       </div>
@@ -154,13 +145,13 @@ function renderTabs(
   };
 
   const renderedTabs = tabs.map((tab, index) => {
-    const tabStyle: React.CSSProperties = index === activeTab ? {textDecoration: "underline"} : {};
+    const tabClass = index === activeTab ? "active" : "";
     const tabText = tab.screen.type === "Counter" ? tab.screen.count : tab.screen.type;
 
     return (
-      <button key={index} onClick={handleSwitchActiveTab(index)} style={tabStyle}>
+      <li key={index} onClick={handleSwitchActiveTab(index)} className={tabClass}>
         {index}: {tabText}
-      </button>
+      </li>
     );
   });
 
@@ -173,11 +164,14 @@ function renderTabs(
   };
 
   return (
-    <nav style={{display: "flex", justifyContent: "space-between"}}>
-      <div>{...renderedTabs}</div>
-      <div>
-        <button onClick={handleRemoveTab}>-</button>
-        <button onClick={handleAddTab}>+</button>
+    <nav className="nav-bar">
+      <ul className="rendered-tabs">{...renderedTabs}</ul>
+      <div className="add-remove-tabs">
+        <p>Add/Remove tabs</p>
+        <div className="buttons-wrapper">
+          <button onClick={handleAddTab}>+</button>
+          <button onClick={handleRemoveTab}>-</button>
+        </div>
       </div>
     </nav>
   );
@@ -214,12 +208,20 @@ function renderActiveTab(
 
       return (
         <>
-          <button onClick={handleDecrement}>-</button>
-          <button onClick={handleReset}>0</button>
-          <button onClick={handleIncrement}>+</button>
-          <button onClick={handleDouble}>Double</button>
-          <div>{tab.screen.count}</div>
-          <div onClick={handleAbout}>About</div>
+          <div className="counter-buttons">
+            <p>Manage Active Tab Count</p>
+            <button onClick={handleIncrement}>+</button>
+            <button onClick={handleDecrement}>-</button>
+            <button onClick={handleDouble}>Double</button>
+            <button onClick={handleReset}>Reset</button>
+            <p>Current Active Tab Count: {tab.screen.count}</p>
+          </div>
+
+          <footer>
+            <nav className="footer-nav">
+              <a className="nav-item" onClick={handleAbout}>About</a>
+            </nav>
+          </footer>
         </>
       );
     }
@@ -231,8 +233,17 @@ function renderActiveTab(
 
       return (
         <>
-          <div>This is an example app with tabs</div>
-          <button onClick={handleCounter}>Switch back to counter</button>
+          <div className="counter-buttons">
+            {/* <p>This is an example app with tabs</p> */}
+            <p>Now you are on the About screen</p>
+            <p>The content of the current active tab has changed</p>
+          </div>
+
+          <footer>
+            <nav className="footer-nav">
+              <a className="nav-item" onClick={handleCounter}>Back to counter</a>
+            </nav>
+          </footer>
         </>
       );
     }
